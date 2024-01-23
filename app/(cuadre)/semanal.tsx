@@ -11,7 +11,7 @@ import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { db } from "../../firebaseCofig";
 import { UseSession } from "../../ctx";
 
-const CDiario = () => {
+const Semanal = () => {
 	const [cuadres, setCuadres] = useState<any>();
 	const [loading, setLoading] = useState<boolean>(true);
 	const { user } = UseSession();
@@ -23,7 +23,7 @@ const CDiario = () => {
 		if (user) {
 			setLoading(true);
 			const docsRef = query(
-				collection(db, "users", user, "diario"),
+				collection(db, "users", user, "semana"),
 				orderBy("__name__", "desc"),
 				limit(10)
 			);
@@ -96,4 +96,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default CDiario;
+export default Semanal;

@@ -8,19 +8,22 @@ import {
 	StyleSheet,
 	useColorScheme,
 	TouchableOpacity,
+	ActivityIndicator,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { UseSession } from "../../ctx";
 import { addDoc, collection, doc, increment, setDoc } from "firebase/firestore";
 import { db } from "../../firebaseCofig";
 
-const formGasto = () => {
-	const [fecha, setFecha] = useState<any>(new Date());
+const formprestamo = () => {
+	const [fechaI, setFecha] = useState<any>(new Date());
 	const [monto, setMonto] = useState<number>();
-	const [descripcion, setDescripcion] = useState<string>();
+	const [loading, setLoading] = useState(false);
 	const [showDatePicker, setShowDatePicker] = useState(false);
+	const { id } = useLocalSearchParams<{ id: string }>();
 	const { user } = UseSession();
+
 	const colorScheme = useColorScheme();
 	const isDarkMode = true; //colorScheme === "dark";
 
@@ -47,30 +50,57 @@ const formGasto = () => {
 		return `${currentDate}`;
 	}
 
-	const handleFormSubmit = () => {
-		if (!monto || !descripcion) {
-			Alert.alert("Campos monto y descripcion obligatorio");
-			return;
-		}
-		if (user) {
-			addDoc(collection(db, "users", user, "gastos"), {
-				fecha: formatFecha(fecha),
-				monto: monto,
-				descripcion: descripcion.trim(),
-			});
-			setDoc(
-				doc(db, "users", user, "diario", formatFecha(fecha)),
-				{ gastos: increment(monto) },
-				{ merge: true }
-			);
-			setDoc(
-				doc(db, "users", user, "semana", mondayWeek(fecha)),
-				{ gastos: increment(monto) },
-				{ merge: true }
-			);
-			router.back();
+	const handleFormSubmit = async () => {
+		try {
+			if (!monto) {
+				Alert.alert("Campos monto obligatorio");
+				return; // Stop the form submission if the mandatory field is missing
+			}
+			setLoading(true);
+			if (user) {
+				const prestamosColl = collection(db, "users", user, "prestamos");
+
+				await addDoc(prestamosColl, {
+					fechaI: formatFecha(fechaI),
+					monto: monto,
+					estado: true,
+					cliente: id,
+					adeuda: monto,
+				});
+
+				await setDoc(
+					doc(db, "users", user, "diario", formatFecha(fechaI)),
+					{
+						prestado: increment(monto),
+					},
+					{ merge: true }
+				);
+				await setDoc(
+					doc(db, "users", user, "semana", mondayWeek(fechaI)),
+					{
+						prestado: increment(monto),
+					},
+					{ merge: true }
+				);
+
+				setLoading(false);
+				// Navigate back (assuming 'router' is from a navigation library like Next.js or React Router)
+				router.back();
+			}
+		} catch (error) {
+			// Handle errors here
+			console.error("Error submitting form:", error);
+			// You can also show an alert or perform other actions to notify the user
 		}
 	};
+
+	if (loading) {
+		return (
+			<View style={[styles.container, styles.horizontal]}>
+				<ActivityIndicator size="large" color="#999999" />
+			</View>
+		);
+	}
 
 	return (
 		<View style={[styles.container, isDarkMode && styles.containertDark]}>
@@ -82,7 +112,7 @@ const formGasto = () => {
 			>
 				<Text style={styles.buttonText}>
 					Fecha:{" "}
-					{new Date(fecha).toLocaleDateString("es-ES", {
+					{new Date(fechaI).toLocaleDateString("es-ES", {
 						day: "numeric",
 						month: "long",
 						year: "numeric",
@@ -93,26 +123,13 @@ const formGasto = () => {
 			{showDatePicker && (
 				<DateTimePicker
 					testID="dateTimePicker"
-					value={fecha}
+					value={fechaI}
 					mode="date"
 					is24Hour={true}
 					display="default"
 					onChange={handleDateChange}
 				/>
 			)}
-			<TextInput
-				placeholder="Descripcion"
-				value={descripcion}
-				onChangeText={setDescripcion}
-				multiline={true}
-				style={[
-					styles.input,
-					styles.descriptionInput,
-					isDarkMode && styles.inputDark,
-				]}
-				placeholderTextColor={isDarkMode ? "gray" : "lightgray"}
-				selectionColor={isDarkMode ? "white" : "black"}
-			/>
 			<TextInput
 				placeholder="Monto"
 				value={monto?.toString() || ""}
@@ -172,10 +189,11 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		fontWeight: "bold",
 	},
-	descriptionInput: {
-		minHeight: 100, // Altura mínima del campo de descripción
-		textAlignVertical: "top", // Texto se alinea desde arriba
+	horizontal: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		padding: 10,
 	},
 });
 
-export default formGasto;
+export default formprestamo;

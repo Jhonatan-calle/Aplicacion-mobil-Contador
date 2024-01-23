@@ -2,18 +2,21 @@ import React, { useState, useEffect } from "react";
 import {
 	View,
 	Text,
+	Pressable,
 	StyleSheet,
 	ActivityIndicator,
 	useColorScheme,
 	FlatList,
 } from "react-native";
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import { router, useLocalSearchParams, Link } from "expo-router";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "../../firebaseCofig";
 import { UseSession } from "../../ctx";
 
-const CDiario = () => {
-	const [cuadres, setCuadres] = useState<any>();
+const Prestamos = () => {
+	const [prestamos, setPrestamos] = useState<any>();
 	const [loading, setLoading] = useState<boolean>(true);
+	const { id } = useLocalSearchParams() as { id: string };
 	const { user } = UseSession();
 
 	const colorScheme = useColorScheme();
@@ -23,23 +26,24 @@ const CDiario = () => {
 		if (user) {
 			setLoading(true);
 			const docsRef = query(
-				collection(db, "users", user, "diario"),
-				orderBy("__name__", "desc"),
-				limit(10)
+				collection(db, "users", user, "prestamos"),
+				where("cliente", "==", id),
+				where("estado", "==", false),
+				orderBy("fechaF")
 			);
 			getDocs(docsRef).then((snapShot) => {
 				if (!snapShot.empty) {
-					const arrayCuadres: any[] = [];
+					const arrayPrestamos: any[] = [];
 					snapShot.forEach((doc) => {
-						arrayCuadres.push({ id: doc.id, ...doc.data() });
+						arrayPrestamos.push({ id: doc.id, ...doc.data() });
 					});
-					setCuadres(arrayCuadres);
+					setPrestamos(arrayPrestamos);
 				}
 				setLoading(false);
 				return;
 			});
 		}
-	}, []);
+	}, [id]);
 
 	const renderItem = ({ item }: any) => {
 		const formattedDate = (fecha: any) => {
@@ -58,11 +62,25 @@ const CDiario = () => {
 			>
 				<View style={{ flex: 1 }}>
 					<Text style={{ color: isDarkMode ? "#ccc" : "#000", fontSize: 18 }}>
-						Fecha: {formattedDate(item.id)} {"\n"}
-						Prestado: {item.prestado} {"\n"}
-						Cobrado: {item.cobrado} {"\n"}
-						Gastos: {item.gastos} {"\n"}
+						Fecha prestado: {formattedDate(item.fechaI)} {"\n"}
+						Fecha cancelado: {formattedDate(item.fechaF)} {"\n"}
+						Monto: {item.monto} {"\n"}
 					</Text>
+				</View>
+				<View style={styles.buttonContainer}>
+					{item?.id && (
+						<Link
+							href={{
+								pathname: "/showCuotas",
+								params: { idPrestamo: item.id, idCliente: id },
+							}}
+							asChild
+						>
+							<Pressable style={styles.button}>
+								<Text style={styles.buttonText}>Ver cuotas</Text>
+							</Pressable>
+						</Link>
+					)}
 				</View>
 			</View>
 		);
@@ -75,7 +93,7 @@ const CDiario = () => {
 			</View>
 		);
 	}
-	return <FlatList data={cuadres} renderItem={renderItem} />;
+	return <FlatList data={prestamos} renderItem={renderItem} />;
 };
 
 const styles = StyleSheet.create({
@@ -94,6 +112,25 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		margin: 10,
 	},
+	buttonContainer: {
+		flexDirection: "row",
+		marginTop: 10,
+		flexWrap: "wrap",
+	},
+	button: {
+		marginTop: 10,
+		marginRight: 10,
+		padding: 10,
+		backgroundColor: "#3498db",
+		borderRadius: 5,
+		alignSelf: "flex-start",
+	},
+	buttonText: {
+		color: "white",
+		fontSize: 16,
+		fontWeight: "bold",
+		paddingHorizontal: 5,
+	},
 });
 
-export default CDiario;
+export default Prestamos;
