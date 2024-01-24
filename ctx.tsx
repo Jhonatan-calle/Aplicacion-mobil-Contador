@@ -27,7 +27,7 @@ export function AuthContextProvider({
 			await auth.onAuthStateChanged((user) => {
 				if (user) {
 					setUser(user.email);
-					router.replace("/(tabs)");
+					router.replace("/(app)/(tabs)");
 				} else {
 					setUser(null);
 					router.replace("/iniciarSecion");

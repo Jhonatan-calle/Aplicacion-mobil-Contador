@@ -12,8 +12,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { ScaleDecorator } from "react-native-draggable-flatlist";
 import { collection, doc,  onSnapshot, setDoc, getDocs, query } from "firebase/firestore";
-import { auth, db } from "../../firebaseCofig";
-import { UseSession } from "../../ctx";
+import { auth, db } from "../../../firebaseCofig";
+import { UseSession } from "../../../ctx";
 
 
 
@@ -54,7 +54,7 @@ export default function Home() {
 					]}
 					onPress={() => {
 						router.push({
-							pathname: "/(clientes)/perfil",
+							pathname: "../perfil",
 							params: { id: item.id },
 						});
 					}}

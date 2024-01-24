@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { Link, router } from "expo-router";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../firebaseCofig";
-import { UseSession } from "../../ctx";
+import { db } from "../../../firebaseCofig";
+import { UseSession } from "../../../ctx";
 
 export default function cuadre() {
 	const colorScheme = useColorScheme();
@@ -48,7 +48,7 @@ export default function cuadre() {
 			<Pressable
 				style={styles.button}
 				onPress={() => {
-					router.push("/(cuadre)/cDiario");
+					router.push("/cDiario");
 				}}
 			>
 				<Text
@@ -57,7 +57,7 @@ export default function cuadre() {
 					Día
 				</Text>
 			</Pressable>
-			<Link href="../(cuadre)/semanal" asChild>
+			<Link href="/semanal" asChild>
 				<Pressable style={styles.button}>
 					<Text
 						style={[styles.buttonText, { color: isDarkMode ? "#ccc" : "#000" }]}
@@ -66,7 +66,7 @@ export default function cuadre() {
 					</Text>
 				</Pressable>
 			</Link>
-			<Link href="../(cuadre)/showGastos" asChild>
+			<Link href="/showGastos" asChild>
 				<Pressable style={styles.button}>
 					<Text
 						style={[styles.buttonText, { color: isDarkMode ? "#ccc" : "#000" }]}
@@ -75,7 +75,7 @@ export default function cuadre() {
 					</Text>
 				</Pressable>
 			</Link>
-			<Link href="../(cuadre)/formGasto" asChild>
+			<Link href="/formGasto" asChild>
 				<Pressable style={styles.button}>
 					<Text
 						style={[styles.buttonText, { color: isDarkMode ? "#ccc" : "#000" }]}
