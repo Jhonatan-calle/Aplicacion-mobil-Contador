@@ -17,10 +17,7 @@ export default function appLayout() {
 				name="formGasto"
 				options={{ presentation: "modal", title: "Nuevo Gasto" }}
 			/>
-			<Stack.Screen
-				name="formPrestamo"
-				options={{ presentation: "modal", title: "Nuevo Prestamo" }}
-			/>
+			<Stack.Screen name="formPrestamo" options={{ title: "Nuevo Prestamo" }} />
 			<Stack.Screen name="perfil" options={{ title: "Perfil" }} />
 			<Stack.Screen
 				name="semanal"

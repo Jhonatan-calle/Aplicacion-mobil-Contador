@@ -18,7 +18,7 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 const db = initializeFirestore(app,{
-  persistence: memoryLocalCache({ sizeBytes: CACHE_SIZE_UNLIMITED })
+  cacheSizeBytes: CACHE_SIZE_UNLIMITED
 })
 
 export {auth, db}

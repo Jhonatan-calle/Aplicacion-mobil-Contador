@@ -75,11 +75,6 @@ export default function Perfil() {
 		}
 	}, [user, id]);
 
-	navigation.addListener("beforeRemove", () => {
-		unSubscribeCliente();
-		unSubscribePrestamos();
-	});
-
 	const handleDeletePrestamo = (id: any) => {
 		Alert.alert(
 			"Confirmar eliminación",
