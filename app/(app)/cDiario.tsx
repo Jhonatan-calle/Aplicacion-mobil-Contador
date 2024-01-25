@@ -22,16 +22,20 @@ const CDiario = () => {
 	useEffect(() => {
 		if (user) {
 			setLoading(true);
-			const docsRef = query(
-				collection(db, "users", user, "diario"),
-				orderBy("__name__", "desc"),
-				limit(10)
-			);
+			const docsRef = query(collection(db, "users", user, "diario"));
 			getDocs(docsRef).then((snapShot) => {
 				if (!snapShot.empty) {
 					const arrayCuadres: any[] = [];
 					snapShot.forEach((doc) => {
 						arrayCuadres.push({ id: doc.id, ...doc.data() });
+					});
+					arrayCuadres.sort((a, b) => {
+						// Asumiendo que 'id' es una cadena de fecha en formato YYYY-MM-DD
+						const dateA: any = new Date(a.id);
+						const dateB: any = new Date(b.id);
+
+						// Compara las fechas para determinar el orden
+						return dateB - dateA;
 					});
 					setCuadres(arrayCuadres);
 				}

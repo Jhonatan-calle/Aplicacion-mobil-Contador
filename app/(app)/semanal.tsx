@@ -22,16 +22,18 @@ const Semanal = () => {
 	useEffect(() => {
 		if (user) {
 			setLoading(true);
-			const docsRef = query(
-				collection(db, "users", user, "semana"),
-				orderBy("__name__", "desc"),
-				limit(10)
-			);
+			const docsRef = query(collection(db, "users", user, "semana")); //aqui poner el maximo de dies cuando se arregle el index
 			getDocs(docsRef).then((snapShot) => {
 				if (!snapShot.empty) {
 					const arrayCuadres: any[] = [];
 					snapShot.forEach((doc) => {
 						arrayCuadres.push({ id: doc.id, ...doc.data() });
+					});
+					arrayCuadres.sort((a, b) => {
+						const dateA: any = new Date(a.id);
+						const dateB: any = new Date(b.id);
+
+						return dateB - dateA;
 					});
 					setCuadres(arrayCuadres);
 				}

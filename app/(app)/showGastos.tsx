@@ -45,6 +45,12 @@ const ShowGastos = () => {
 					response.forEach((doc) => {
 						docsGastos.push({ id: doc.id, ...doc.data() });
 					});
+					docsGastos.sort((a, b) => {
+						const dateA: any = new Date(a.fecha);
+						const dateB: any = new Date(b.ifecha);
+
+						return dateB - dateA;
+					});
 					setGastos(docsGastos);
 				}
 			});

@@ -50,9 +50,15 @@ const Cuotas = () => {
 			);
 			unSubscribeCuotas = onSnapshot(cuotasRef, (snapShot) => {
 				if (!snapShot.empty) {
-					let cuotas: { id: string }[] = [];
+					let cuotas: any[] = [];
 					snapShot.forEach((doc) => {
 						cuotas.push({ ...doc.data(), id: doc.id });
+					});
+					cuotas.sort((a, b) => {
+						const dateA: any = new Date(a.fecha);
+						const dateB: any = new Date(b.ifecha);
+
+						return dateB - dateA;
 					});
 					setCuotas(cuotas);
 				}

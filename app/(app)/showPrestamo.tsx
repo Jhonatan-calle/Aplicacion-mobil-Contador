@@ -37,6 +37,12 @@ const Prestamos = () => {
 					snapShot.forEach((doc) => {
 						arrayPrestamos.push({ id: doc.id, ...doc.data() });
 					});
+					arrayPrestamos.sort((a, b) => {
+						const dateA: any = new Date(a.fechaF);
+						const dateB: any = new Date(b.ifechaF);
+
+						return dateB - dateA;
+					});
 					setPrestamos(arrayPrestamos);
 				}
 				setLoading(false);

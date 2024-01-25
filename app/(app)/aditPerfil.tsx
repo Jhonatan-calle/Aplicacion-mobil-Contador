@@ -32,6 +32,7 @@ const aditPerfil = () => {
 				setPerfil(perfilRef);
 			});
 		}
+		setLoading(false);
 	}, [id]);
 
 	useEffect(() => {

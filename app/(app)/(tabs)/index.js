@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { ScaleDecorator } from "react-native-draggable-flatlist";
-import { collection, doc,  onSnapshot, setDoc, getDocs, query } from "firebase/firestore";
+import { collection, doc,  onSnapshot, setDoc, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../../firebaseCofig";
 import { UseSession } from "../../../ctx";
 
@@ -28,7 +28,7 @@ export default function Home() {
 		if (user) {
 			setLoading(true);
 			const clientesRef = collection(db, "users", user, "clientes");
-			const unSuscribe = onSnapshot(clientesRef,(querySnapshot)=>{
+			const unSuscribeClientes = onSnapshot(clientesRef,(querySnapshot)=>{
 				const clientesArray2 =querySnapshot.docs
 				.map((doc) => ({ id: doc.id, ...doc.data() }))
 				.sort((a, b) => a.orderIndex - b.orderIndex);
@@ -36,9 +36,13 @@ export default function Home() {
 				setLoading(false);
 				setLoading(false);
 			})
+			const Prestamos = onSnapshot(collection(db,"users",user,"prestamos"))
+			const cuotas = onSnapshot(collection(db,"users",user,"cuotas"))
+			const cDiario = onSnapshot(collection(db,"users",user,"diario"))
+			const Csemanal = onSnapshot(collection(db,"users",user,"semana"))
 		}
 	},[user])
-		
+	
 	 
 	
 	const renderItem = ({ item, drag, isActive }) => {

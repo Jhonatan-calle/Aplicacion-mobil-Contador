@@ -64,10 +64,19 @@ export default function Perfil() {
 			});
 
 			unSubscribePrestamos = onSnapshot(prestamosRef, (snapshot) => {
-				const prestamosSnap = snapshot.docs.map((doc) => ({
+				const prestamosSnap: any[] = snapshot.docs.map((doc) => ({
 					id: doc.id,
 					...doc.data(),
 				}));
+				prestamosSnap.sort((a, b) => {
+					// Asumiendo que 'id' es una cadena de fecha en formato YYYY-MM-DD
+					const dateA: any = new Date(a.fechaI);
+					const dateB: any = new Date(b.fechaI);
+
+					// Compara las fechas para determinar el orden
+					return dateB - dateA;
+				});
+
 				setPrestamos(prestamosSnap);
 			});
 

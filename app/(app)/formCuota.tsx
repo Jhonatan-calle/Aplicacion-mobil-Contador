@@ -77,21 +77,21 @@ const formCuota = () => {
 						return;
 					}
 
-					await addDoc(collection(db, "users", user, "cuotas"), {
+					addDoc(collection(db, "users", user, "cuotas"), {
 						fecha: formatFecha(fechaI),
 						monto: monto,
 						cliente: idCliente,
 						prestamo: idPrestamo,
 					});
 
-					await setDoc(
+					setDoc(
 						doc(db, "users", user, "diario", formatFecha(fechaI)),
 						{
 							cobrado: increment(monto),
 						},
 						{ merge: true }
 					);
-					await setDoc(
+					setDoc(
 						doc(db, "users", user, "semana", mondayWeek(fechaI)),
 						{
 							cobrado: increment(monto),
@@ -100,13 +100,13 @@ const formCuota = () => {
 					);
 
 					if (prestamo.adeuda - monto === 0) {
-						await setDoc(
+						setDoc(
 							prestamoRef,
 							{ adeuda: 0, estado: false, fechaF: fechaI.toISOString() },
 							{ merge: true }
 						);
 					} else {
-						await setDoc(
+						setDoc(
 							prestamoRef,
 							{ adeuda: prestamo.adeuda - monto },
 							{ merge: true }

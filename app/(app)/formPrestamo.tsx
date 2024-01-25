@@ -68,14 +68,14 @@ const formprestamo = () => {
 					adeuda: monto,
 				});
 
-				await setDoc(
+				setDoc(
 					doc(db, "users", user, "diario", formatFecha(fechaI)),
 					{
 						prestado: increment(monto),
 					},
 					{ merge: true }
 				);
-				await setDoc(
+				setDoc(
 					doc(db, "users", user, "semana", mondayWeek(fechaI)),
 					{
 						prestado: increment(monto),
