@@ -33,7 +33,7 @@ Para probar o utilizar la aplicación, es necesario:
 4. Ejecutar la aplicación en un simulador o dispositivo físico.
 
 ```bash
-git clone https://github.com/Jhonatan-calle/Aplicacion-mobil-flutter-Contador.git
+git clone https://github.com/Jhonatan-calle/Aplicacion-mobil-expo-Contador.git
 cd registro-prestamos
 npm install
 expo start
