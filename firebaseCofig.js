@@ -14,9 +14,16 @@ const firebaseConfig = {
   };
 
 const app = initializeApp(firebaseConfig);
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
+// Check if auth is already initialized, if not initialize it
+let auth;
+try {
+  auth = getAuth(app);
+} catch (error) {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  });
+}
+
 const db = initializeFirestore(app,{
   cacheSizeBytes: CACHE_SIZE_UNLIMITED
 })
